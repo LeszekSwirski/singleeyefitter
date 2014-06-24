@@ -136,7 +136,7 @@ namespace singleeyefitter {
 		using std::cos;
 		auto xt = el.centre.x() + el.major_radius*cos(el.angle)*cos(t) - el.minor_radius*sin(el.angle)*sin(t);
 		auto yt = el.centre.y() + el.major_radius*sin(el.angle)*cos(t) + el.minor_radius*cos(el.angle)*sin(t);
-		return Eigen::Matrix<std::common_type<Scalar, Scalar2>::type, 2, 1>(xt, yt);
+		return Eigen::Matrix<typename std::common_type<Scalar, Scalar2>::type, 2, 1>(xt, yt);
 	}
 
 }

@@ -5,6 +5,9 @@
 
 namespace singleeyefitter {
 
+	template<typename T>
+	class Conic;
+
 	// Conicoid (quartic surface) of the form:
 	// Ax^2 + By^2 + Cz^2 + 2Fyz + 2Gzx + 2Hxy + 2Ux + 2Vy + 2Wz + D = 0
 	template<typename T>
@@ -54,7 +57,7 @@ namespace singleeyefitter {
 			// becomes
 			// Ax^2 + Bxy + Cy^2 + Fx + Ey + D = 0
 
-			return Conic<ConicScalar>(A,
+			return Conic<Scalar>(A,
 				2 * H,
 				B,
 				2 * G*z + 2 * U,

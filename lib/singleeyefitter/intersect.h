@@ -57,7 +57,7 @@ Eigen::Matrix<Scalar,Dim,1> nearest_intersect(const Eigen::ParametrizedLine<Scal
 template<typename Range>
 typename boost::range_value<Range>::type::VectorType nearest_intersect(const Range& lines) {
 	typedef typename boost::range_value<Range>::type::VectorType Vector;
-	typedef typename Eigen::Matrix<Vector::Scalar, Vector::RowsAtCompileTime, Vector::RowsAtCompileTime> Matrix;
+	typedef typename Eigen::Matrix<typename Vector::Scalar, Vector::RowsAtCompileTime, Vector::RowsAtCompileTime> Matrix;
 
 	static_assert(Vector::ColsAtCompileTime == 1, "Requires column vector");
 

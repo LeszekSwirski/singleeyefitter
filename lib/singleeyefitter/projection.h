@@ -6,16 +6,18 @@
 #include "Circle.h"
 #include "Conic.h"
 #include "math.h"
+#include <singleeyefitter/Conicoid.h>
 
 namespace singleeyefitter {
 
 	template<typename Scalar>
-	typename Conic<Scalar> project(const Circle3D<Scalar>& circle, Scalar focal_length)
+	Conic<Scalar> project(const Circle3D<Scalar>& circle, Scalar focal_length)
 	{
+		typedef typename Circle3D<Scalar>::Vector Vector;
 		using math::sq;
 
-		Circle3D<Scalar>::Vector c = circle.centre;
-		Circle3D<Scalar>::Vector n = circle.normal;
+		Vector c = circle.centre;
+		Vector n = circle.normal;
 		Scalar r = circle.radius;
 		Scalar f = focal_length;
 
@@ -82,7 +84,7 @@ namespace singleeyefitter {
 		Scalar cn = c.dot(n);
 		Scalar c2r2 = (c.dot(c) - sq(r));
 
-		Circle3D<Scalar>::Vector ABC = (sq(cn) - 2.0*cn*c.array()*n.array() + c2r2*n.array().square());
+		Vector ABC = (sq(cn) - 2.0*cn*c.array()*n.array() + c2r2*n.array().square());
 		Scalar F = 2.0*(c2r2*n(1)*n(2) - cn*(n(1)*c(2) + n(2)*c(1)));
 		Scalar G = 2.0*(c2r2*n(2)*n(0) - cn*(n(2)*c(0) + n(0)*c(2)));
 		Scalar H = 2.0*(c2r2*n(0)*n(1) - cn*(n(0)*c(1) + n(1)*c(0)));
@@ -118,25 +120,25 @@ namespace singleeyefitter {
 
 
 	template<typename Scalar>
-	typename Ellipse2D<Scalar> project(const Sphere<Scalar>& sphere, typename Scalar focal_length)
+	Ellipse2D<Scalar> project(const Sphere<Scalar>& sphere, typename Scalar focal_length)
 	{
 		return Ellipse2D<Scalar>(
-			focal_length * sphere.centre.head<2>() / sphere.centre[2],
+			focal_length * sphere.centre.template head<2>() / sphere.centre[2],
 			focal_length * sphere.radius / sphere.centre[2],
 			focal_length * sphere.radius / sphere.centre[2],
 			0);
 	}
 	template<typename Derived>
-	typename Eigen::DenseBase<Derived>::FixedSegmentReturnType<2>::Type::PlainObject project(const Eigen::DenseBase<Derived>& point, typename Eigen::DenseBase<Derived>::Scalar focal_length)
+	typename Eigen::DenseBase<Derived>::template FixedSegmentReturnType<2>::Type::PlainObject project(const Eigen::DenseBase<Derived>& point, typename Eigen::DenseBase<Derived>::Scalar focal_length)
 	{
 		static_assert(Derived::IsVectorAtCompileTime && Derived::SizeAtCompileTime == 3, "Point must be 3 element vector");
 
-		return focal_length * point.head<2>() / point(2);
+		return focal_length * point.template head<2>() / point(2);
 	}
 
 
 	template<typename Scalar>
-	typename std::pair<Circle3D<Scalar>, Circle3D<Scalar>> unproject(const Ellipse2D<Scalar>& ellipse, Scalar circle_radius, Scalar focal_length)
+	std::pair<Circle3D<Scalar>, Circle3D<Scalar>> unproject(const Ellipse2D<Scalar>& ellipse, Scalar circle_radius, Scalar focal_length)
 	{
 		using std::sqrt;
 		using boost::math::sign;

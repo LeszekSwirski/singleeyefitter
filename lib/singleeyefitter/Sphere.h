@@ -88,4 +88,4 @@ namespace singleeyefitter {
 	};
 }*/
 
-#endif _SPHERE_H_
+#endif//_SPHERE_H_
