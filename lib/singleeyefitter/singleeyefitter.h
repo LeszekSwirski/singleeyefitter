@@ -2,7 +2,7 @@
 #define SingleEyeFitter_h__
 
 #include <Eigen/Core>
-#include <opencv2/core.hpp>
+#include <opencv2/core/core.hpp>
 #include <singleeyefitter/cvx.h>
 #include <singleeyefitter/Circle.h>
 #include <singleeyefitter/Ellipse.h>
