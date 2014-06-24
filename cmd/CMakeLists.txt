@@ -1,7 +1,7 @@
 find_package (OpenCV REQUIRED)
 find_package (Boost REQUIRED COMPONENTS serialization filesystem system)
 find_package (TBB REQUIRED)
-find_package (Eigen3 REQUIRED)
+find_package (Eigen 3.0.0 REQUIRED)
 find_package (Ceres REQUIRED)
 
 set(PUPILTRACKER_INSTALL_DIR "" CACHE PATH "Pupil tracker installation directory")
