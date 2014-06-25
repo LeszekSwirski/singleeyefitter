@@ -45,11 +45,11 @@
 
 //use_lines: Enables line clipping. Adds a very minor cost to performance.
 //#define use_lines
-  
-//When enabled, code developed with earlier versions of Clipper 
-//(ie prior to ver 6) should compile without changes. 
+
+//When enabled, code developed with earlier versions of Clipper
+//(ie prior to ver 6) should compile without changes.
 //In a future update, this compatability code will be removed.
-#define use_deprecated  
+#define use_deprecated
 
 #include <vector>
 #include <set>
@@ -93,7 +93,7 @@ struct IntPoint {
   }
   friend inline bool operator!= (const IntPoint& a, const IntPoint& b)
   {
-    return a.X != b.X  || a.Y != b.Y; 
+    return a.X != b.X  || a.Y != b.Y;
   }
 };
 //------------------------------------------------------------------------------
@@ -130,8 +130,8 @@ typedef void (*TZFillCallback)(IntPoint& z1, IntPoint& z2, IntPoint& pt);
 class PolyNode;
 typedef std::vector< PolyNode* > PolyNodes;
 
-class PolyNode 
-{ 
+class PolyNode
+{
 public:
     PolyNode();
     Path Contour;
@@ -150,7 +150,7 @@ private:
 };
 
 class PolyTree: public PolyNode
-{ 
+{
 public:
     ~PolyTree(){Clear();};
     PolyNode* GetFirst() const;
@@ -294,10 +294,10 @@ private:
   PolyFillType     m_ClipFillType;
   PolyFillType     m_SubjFillType;
   bool             m_ReverseOutput;
-  bool             m_UsingPolyTree; 
+  bool             m_UsingPolyTree;
   bool             m_StrictSimple;
 #ifdef use_xyz
-  TZFillCallback   m_ZFill; //custom callback 
+  TZFillCallback   m_ZFill; //custom callback
 #endif
   void SetWindingCount(TEdge& edge);
   bool IsEvenOddFillType(const TEdge& edge) const;

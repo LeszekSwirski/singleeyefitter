@@ -38,8 +38,8 @@
 using namespace singleeyefitter;
 
 struct fitEyeModel_ret {
-	Sphere<double> est_eye, est_eye_lm, est_eye_contrast;
-	std::vector<Circle3D<double>> est_pupils, est_pupils2, est_pupils_lm, est_pupils_contrast;
+    Sphere<double> est_eye, est_eye_lm, est_eye_contrast;
+    std::vector<Circle3D<double>> est_pupils, est_pupils2, est_pupils_lm, est_pupils_contrast;
 };
 
 
@@ -110,62 +110,62 @@ cv::RotatedRect toImgCoord(const cv::RotatedRect& rect, const cv::Mat& m, float 
 }
 
 namespace boost {
-	namespace serialization {
+    namespace serialization {
 
-		template<class Archive, class T>
-		inline void serialize(Archive & ar, Ellipse2D<T> & g, const unsigned int version)
-		{
-			ar & g.centre;
-			ar & g.major_radius;
-			ar & g.minor_radius;
-			ar & g.angle;
-		}
-		template<class Archive, typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int _MaxCols>
-		inline void serialize(Archive & ar, 
-			                  Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols> & t, 
-			                  const unsigned int file_version) 
-		{
-			int rows = t.rows(), cols = t.cols();
-			ar & rows;
-			ar & cols;
-			if( rows * cols != t.size() )
-				t.resize( rows, cols );
+        template<class Archive, class T>
+        inline void serialize(Archive & ar, Ellipse2D<T> & g, const unsigned int version)
+        {
+            ar & g.centre;
+            ar & g.major_radius;
+            ar & g.minor_radius;
+            ar & g.angle;
+        }
+        template<class Archive, typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int _MaxCols>
+        inline void serialize(Archive & ar,
+                              Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols> & t,
+                              const unsigned int file_version)
+        {
+            int rows = t.rows(), cols = t.cols();
+            ar & rows;
+            ar & cols;
+            if( rows * cols != t.size() )
+                t.resize( rows, cols );
 
-			for(int i=0; i<t.size(); i++)
-				ar & t.data()[i];
-		}
-		template<class Archive, class T>
-		inline void serialize(Archive & ar, cv::Point_<T> & g, const unsigned int version)
-		{
-			ar & g.x;
-			ar & g.y;
-		}
+            for(int i=0; i<t.size(); i++)
+                ar & t.data()[i];
+        }
+        template<class Archive, class T>
+        inline void serialize(Archive & ar, cv::Point_<T> & g, const unsigned int version)
+        {
+            ar & g.x;
+            ar & g.y;
+        }
 
-	} // namespace serializationstd::vector<Eigen::Vector2d>
+    } // namespace serializationstd::vector<Eigen::Vector2d>
 } // namespace boost
 
 template <typename T>
 std::vector<size_t> sort_indexes_impl(const T &v, std::random_access_iterator_tag)
 {
-	static_assert(std::is_same<typename std::iterator_traits<typename T::iterator>::iterator_category, std::random_access_iterator_tag>::value, "Type matches tag");
-	
-	// initialize original index locations
-	auto idx = fun::range_<std::vector<size_t>>(v.size());
+    static_assert(std::is_same<typename std::iterator_traits<typename T::iterator>::iterator_category, std::random_access_iterator_tag>::value, "Type matches tag");
 
-	// sort indexes based on comparing values in v
+    // initialize original index locations
+    auto idx = fun::range_<std::vector<size_t>>(v.size());
+
+    // sort indexes based on comparing values in v
     sort(std::begin(idx), std::end(idx), [&](size_t i1, size_t i2){ return v[i1] < v[i2]; });
 
-	return idx;
+    return idx;
 }
 
 template <typename T>
 std::vector<size_t> sort_indexes(const T &v)
 {
-	return sort_indexes_impl(v, typename std::iterator_traits<typename T::iterator>::iterator_category());
+    return sort_indexes_impl(v, typename std::iterator_traits<typename T::iterator>::iterator_category());
 }
 
 template< typename T >
-void reorder(std::vector<T>& vals, const std::vector<size_t>& idxs)  {  
+void reorder(std::vector<T>& vals, const std::vector<size_t>& idxs)  {
     vals = fun::map([&](size_t i){ return vals[i]; }, idxs);
 }
 
@@ -219,9 +219,9 @@ void writeResults(const std::string& filename,
                   const std::vector<EyeModelFitter::Pupil>& edge_pupils,
                   const std::map<int, PupilGroundTruth>& true_pupils,
                   double focal_length) {
-	std::ofstream of(filename);
+    std::ofstream of(filename);
 
-	for (int i = 0; i < ids.size(); ++i) {
+    for (int i = 0; i < ids.size(); ++i) {
         const auto& pupil = null_pupils[i].circle;
         const auto& pupil2 = simple_pupils[i].circle;
         const auto& pupil_dlib = contrast_pupils[i].circle;
@@ -245,11 +245,11 @@ void writeResults(const std::string& filename,
         double ellipdist_dlib = calcEllipseTruthOverlap(Ellipse2D<double>(project(pupil_dlib, focal_length)), true_pupil_outline);
         double ellipdist_lm = calcEllipseTruthOverlap(Ellipse2D<double>(project(pupil_lm, focal_length)), true_pupil_outline);
 
-		of << id;
-		of << "\t" << anglediff << "\t" << anglediff2 << "\t" << anglediff_dlib << "\t" << anglediff_lm;
-		of << "\t" << ellipdist << "\t" << ellipdist2 << "\t" << ellipdist_dlib << "\t" << ellipdist_lm;
-		of << std::endl;
-	}
+        of << id;
+        of << "\t" << anglediff << "\t" << anglediff2 << "\t" << anglediff_dlib << "\t" << anglediff_lm;
+        of << "\t" << ellipdist << "\t" << ellipdist2 << "\t" << ellipdist_dlib << "\t" << ellipdist_lm;
+        of << std::endl;
+    }
 }
 
 std::string regex_escape(const std::string& pattern) {
@@ -306,16 +306,16 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-	//try
-	{
-		namespace fs = boost::filesystem;
+    //try
+    {
+        namespace fs = boost::filesystem;
 
-		std::vector<int> ids;
-		std::vector<cv::Mat> obs_eye_images;
-		std::vector<Ellipse2D<double>> obs_pupil_ellipses;
-		std::vector<std::vector<cv::Point2f>> obs_pupil_inliers;
+        std::vector<int> ids;
+        std::vector<cv::Mat> obs_eye_images;
+        std::vector<Ellipse2D<double>> obs_pupil_ellipses;
+        std::vector<std::vector<cv::Point2f>> obs_pupil_inliers;
 
-		fs::path imagedir(argv[1]);
+        fs::path imagedir(argv[1]);
         std::string filepattern(argv[2]);
 
         std::smatch filepatternisregex_match;
@@ -327,112 +327,112 @@ int main(int argc, char* argv[])
             filepattern = regex_replace(filepattern, std::regex("#+"), std::string("($&\\d*)"));
             filepattern = regex_replace(filepattern, std::regex("#"), std::string("\\d"));
         }
-		std::regex file_regex(filepattern);
+        std::regex file_regex(filepattern);
 
-		tbb::mutex push_lock;
+        tbb::mutex push_lock;
 
-		tbb::parallel_for_each(fs::directory_iterator(imagedir), fs::directory_iterator(), [&] (fs::path path) {
-			std::smatch path_match;
-			std::string path_str = path.filename().string();
+        tbb::parallel_for_each(fs::directory_iterator(imagedir), fs::directory_iterator(), [&] (fs::path path) {
+            std::smatch path_match;
+            std::string path_str = path.filename().string();
 
-			if (is_regular_file(path) && regex_match(path_str, path_match, file_regex)) {
-				int id = parse_int(path_match[1].str());
-				cv::Mat eye = cv::imread(path.string(), CV_LOAD_IMAGE_GRAYSCALE);
-				Ellipse2D<double> el;
-				std::vector<cv::Point2f> inlier_pts;
+            if (is_regular_file(path) && regex_match(path_str, path_match, file_regex)) {
+                int id = parse_int(path_match[1].str());
+                cv::Mat eye = cv::imread(path.string(), CV_LOAD_IMAGE_GRAYSCALE);
+                Ellipse2D<double> el;
+                std::vector<cv::Point2f> inlier_pts;
 
-				bool cache_valid = false;
-				const int CACHE_VERSION = 8;
+                bool cache_valid = false;
+                const int CACHE_VERSION = 8;
 
-				fs::path cache_path = path.parent_path() / fs::path(path.stem().string() + ".cache");
+                fs::path cache_path = path.parent_path() / fs::path(path.stem().string() + ".cache");
 
-				if (exists(cache_path)) {
-					std::ifstream ifs(cache_path.string());
-					boost::archive::text_iarchive ia(ifs);
+                if (exists(cache_path)) {
+                    std::ifstream ifs(cache_path.string());
+                    boost::archive::text_iarchive ia(ifs);
 
-					int ia_cache_version;
-					ia >> ia_cache_version;
-					if (CACHE_VERSION == ia_cache_version) {
-						std::cout << "Loading " << cache_path.string() << std::endl;
+                    int ia_cache_version;
+                    ia >> ia_cache_version;
+                    if (CACHE_VERSION == ia_cache_version) {
+                        std::cout << "Loading " << cache_path.string() << std::endl;
 
-						ia >> el;
-						ia >> inlier_pts;
+                        ia >> el;
+                        ia >> inlier_pts;
 
-						cache_valid = true;
-					}
-				}
+                        cache_valid = true;
+                    }
+                }
 
-				if (!cache_valid)
-				{
-					std::cout << "Pupil tracking " << path.string() << std::endl;
+                if (!cache_valid)
+                {
+                    std::cout << "Pupil tracking " << path.string() << std::endl;
 
-					pupiltracker::tracker_log log;
+                    pupiltracker::tracker_log log;
 
-					pupiltracker::TrackerParams pupil_tracker_params;
-					pupil_tracker_params.Radius_Min = 20;
-					pupil_tracker_params.Radius_Max = 70;
-					pupil_tracker_params.CannyThreshold1 = 20;
-					pupil_tracker_params.CannyThreshold2 = 40;
-					pupil_tracker_params.CannyBlur = 1.6;
-					pupil_tracker_params.EarlyRejection = true;
-					pupil_tracker_params.EarlyTerminationPercentage = 95;
-					pupil_tracker_params.PercentageInliers = 20;
-					pupil_tracker_params.InlierIterations = 2;
-					pupil_tracker_params.ImageAwareSupport = true;
-					pupil_tracker_params.StarburstPoints = 0;
-					//pupil_tracker_params.Seed = 0;
+                    pupiltracker::TrackerParams pupil_tracker_params;
+                    pupil_tracker_params.Radius_Min = 20;
+                    pupil_tracker_params.Radius_Max = 70;
+                    pupil_tracker_params.CannyThreshold1 = 20;
+                    pupil_tracker_params.CannyThreshold2 = 40;
+                    pupil_tracker_params.CannyBlur = 1.6;
+                    pupil_tracker_params.EarlyRejection = true;
+                    pupil_tracker_params.EarlyTerminationPercentage = 95;
+                    pupil_tracker_params.PercentageInliers = 20;
+                    pupil_tracker_params.InlierIterations = 2;
+                    pupil_tracker_params.ImageAwareSupport = true;
+                    pupil_tracker_params.StarburstPoints = 0;
+                    //pupil_tracker_params.Seed = 0;
 
-					pupiltracker::findPupilEllipse_out pupil_tracker_out;
-					bool found = pupiltracker::findPupilEllipse(pupil_tracker_params, eye, pupil_tracker_out, log);
+                    pupiltracker::findPupilEllipse_out pupil_tracker_out;
+                    bool found = pupiltracker::findPupilEllipse(pupil_tracker_params, eye, pupil_tracker_out, log);
 
-					if (found) {
-						el = toEllipse<double>(pupil_tracker_out.elPupil);
-						el.centre -= Eigen::Vector2d(eye.cols, eye.rows)/2;
+                    if (found) {
+                        el = toEllipse<double>(pupil_tracker_out.elPupil);
+                        el.centre -= Eigen::Vector2d(eye.cols, eye.rows)/2;
 
-						for (auto&& inlier : pupil_tracker_out.inliers) {
-							inlier_pts.push_back(cv::Point2f(pupil_tracker_out.roiPupil.x + inlier.x - eye.cols/2, pupil_tracker_out.roiPupil.y + inlier.y - eye.rows/2));
-						}
-					} else {
-						el = Ellipse2D<double>::Null;
-					}
+                        for (auto&& inlier : pupil_tracker_out.inliers) {
+                            inlier_pts.push_back(cv::Point2f(pupil_tracker_out.roiPupil.x + inlier.x - eye.cols/2, pupil_tracker_out.roiPupil.y + inlier.y - eye.rows/2));
+                        }
+                    } else {
+                        el = Ellipse2D<double>::Null;
+                    }
 
-					std::ofstream ofs(cache_path.string());
-					boost::archive::text_oarchive oa(ofs);
+                    std::ofstream ofs(cache_path.string());
+                    boost::archive::text_oarchive oa(ofs);
 
-					oa << CACHE_VERSION;
-					oa << el;
-					oa << inlier_pts;
-				}
+                    oa << CACHE_VERSION;
+                    oa << el;
+                    oa << inlier_pts;
+                }
 
-				{
-					tbb::mutex::scoped_lock push_guard(push_lock);
+                {
+                    tbb::mutex::scoped_lock push_guard(push_lock);
 
-					if (el) {
-						ids.push_back(id);
-						obs_eye_images.push_back(eye);
-						obs_pupil_ellipses.push_back(el);
-						obs_pupil_inliers.push_back(std::move(inlier_pts));
-					}
-				}
-			}
-		});
+                    if (el) {
+                        ids.push_back(id);
+                        obs_eye_images.push_back(eye);
+                        obs_pupil_ellipses.push_back(el);
+                        obs_pupil_inliers.push_back(std::move(inlier_pts));
+                    }
+                }
+            }
+        });
 
-		auto&& idx_sort = sort_indexes(ids);
-		reorder(ids, idx_sort);
-		reorder(obs_eye_images, idx_sort);
-		reorder(obs_pupil_ellipses, idx_sort);
-		reorder(obs_pupil_inliers, idx_sort);
+        auto&& idx_sort = sort_indexes(ids);
+        reorder(ids, idx_sort);
+        reorder(obs_eye_images, idx_sort);
+        reorder(obs_pupil_ellipses, idx_sort);
+        reorder(obs_pupil_inliers, idx_sort);
 
         double fov = parse_double(argv[3]);
-		fov *= PI / 180;
-		double focal_length = (obs_eye_images[0].cols / 2) / std::tan(fov/2);
+        fov *= PI / 180;
+        double focal_length = (obs_eye_images[0].cols / 2) / std::tan(fov/2);
 
-		bool animate = false;
+        bool animate = false;
 
 
-		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		// This is where the stuff actually happens
-		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // This is where the stuff actually happens
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         EyeModelFitter null_fitter(focal_length, 5, 0.5);
         EyeModelFitter simple_fitter(focal_length, 5, 0.5);
@@ -476,9 +476,9 @@ int main(int argc, char* argv[])
             if (ground_truth_file.is_open()) {
                 std::string str;
                 std::getline(ground_truth_file, str);
-		        while(ground_truth_file.good()) {
-			        int id;
-			        PupilGroundTruth true_pupil;
+                while(ground_truth_file.good()) {
+                    int id;
+                    PupilGroundTruth true_pupil;
 
                     /* One day I will understand boost qi enough to do something like this:
 
@@ -525,32 +525,32 @@ int main(int argc, char* argv[])
                         std::cout << "Failed to parse ground truth: " << str << std::endl;
                     }
 
-			        std::getline(ground_truth_file, str);
-		        }
+                    std::getline(ground_truth_file, str);
+                }
             }
         }
 
 
-		double displayscale = 1;
-		bool do_display = true;
-		int curr_i = 0;
+        double displayscale = 1;
+        bool do_display = true;
+        int curr_i = 0;
 
-		namespace acc=boost::accumulators;
-		acc::accumulator_set<double, acc::stats<acc::tag::mean, acc::tag::variance>> acc_ellipdist, acc_ellipdist2, acc_ellipdist_dlib, acc_ellipdist_lm;
-		bool recalc_ellipdist = true;
+        namespace acc=boost::accumulators;
+        acc::accumulator_set<double, acc::stats<acc::tag::mean, acc::tag::variance>> acc_ellipdist, acc_ellipdist2, acc_ellipdist_dlib, acc_ellipdist_lm;
+        bool recalc_ellipdist = true;
 
-		bool display_obs_pupil_ellipses = true;
-		bool display_est_pupil_ellipses = true;
-		bool display_est_pupil_ellipses_contrast = true;
-		bool display_est_pupil_ellipses_lm = true;
-		bool display_true_pupil_ellipses = true;
-		bool display_intersection_ellip = false;
+        bool display_obs_pupil_ellipses = true;
+        bool display_est_pupil_ellipses = true;
+        bool display_est_pupil_ellipses_contrast = true;
+        bool display_est_pupil_ellipses_lm = true;
+        bool display_true_pupil_ellipses = true;
+        bool display_intersection_ellip = false;
         bool display_intersection_lines = false;
 
         bool ransac = true;
         bool use_smoothness = true;
 
-        auto animate_func = 
+        auto animate_func =
             [&] (const Sphere<double>& eye, const std::vector<Circle3D<double>>& pupils) {
                 cv::Mat curr = obs_eye_images[curr_i];
                 cv::Mat curr_disp = cvx::resize(cvx::cvtColor(cvx::convert(curr, CV_8U, 255),
@@ -574,85 +574,85 @@ int main(int argc, char* argv[])
         //cv::createButton("Display initial pupil model", [](int state, void* userdata){*(bool*)userdata = state;}, &display_est_pupil_ellipses, cv::QT_CHECKBOX, display_est_pupil_ellipses);
         //cv::createButton("Display contrast-optimized pupils", [](int state, void* userdata){*(bool*)userdata = state;}, &display_est_pupil_ellipses_contrast, cv::QT_CHECKBOX, display_est_pupil_ellipses_contrast);
 
-		cv::VideoWriter recording_writer;
-		while(do_display) {
+        cv::VideoWriter recording_writer;
+        while(do_display) {
             cv::Mat disp = cv::Mat::zeros(displayscale*obs_eye_images[0].rows, displayscale*obs_eye_images[0].cols, CV_8UC3);
 
-			
+
             cv::Mat curr = obs_eye_images[curr_i];
             cv::Mat curr_disp = cvx::resize(cvx::cvtColor(curr,
                                                           cv::COLOR_GRAY2BGR),
                                             displayscale, 0, cv::INTER_CUBIC);
 
-			cv::Mat curr_edge_disp = cv::Mat::zeros(curr_disp.rows, curr_disp.cols, CV_8UC3);
+            cv::Mat curr_edge_disp = cv::Mat::zeros(curr_disp.rows, curr_disp.cols, CV_8UC3);
 
-			for (const auto& inlier : obs_pupil_inliers[curr_i]) {
-				int x = std::floor(curr_edge_disp.cols/2 + inlier.x * displayscale - 0.5);
-				int y = std::floor(curr_edge_disp.rows/2 + inlier.y * displayscale - 0.5);
-				if (x < 0 || x >= curr_edge_disp.cols || y < 0 || y >= curr_edge_disp.rows)
-					continue;
+            for (const auto& inlier : obs_pupil_inliers[curr_i]) {
+                int x = std::floor(curr_edge_disp.cols/2 + inlier.x * displayscale - 0.5);
+                int y = std::floor(curr_edge_disp.rows/2 + inlier.y * displayscale - 0.5);
+                if (x < 0 || x >= curr_edge_disp.cols || y < 0 || y >= curr_edge_disp.rows)
+                    continue;
 
-				curr_edge_disp.at<cv::Vec3b>(y,x) = cv::Vec3b::all(255);
-			}
+                curr_edge_disp.at<cv::Vec3b>(y,x) = cv::Vec3b::all(255);
+            }
 
-			if (display_true_pupil_ellipses) {
-                if (true_eye) {
-				    cv::ellipse(disp, toImgCoord(toRotatedRect(project(true_eye, focal_length)), disp, displayscale), cvx::rgb(60,60,60), -1, CV_AA);
-                }
-			}
-
-			if (display_est_pupil_ellipses) {
-                if (simple_fitter.eye) {
-				    cv::ellipse(disp, toImgCoord(toRotatedRect(project(simple_fitter.eye, focal_length)), disp, displayscale), cvx::rgb(60,0,60), 1, CV_AA);
-				    cv::ellipse(curr_disp, toImgCoord(toRotatedRect(project(simple_fitter.eye, focal_length)), curr_disp, displayscale), cvx::rgb(60,0,60), 1, CV_AA);
-                }
-			}
-			if (display_est_pupil_ellipses_contrast) {
-                if (contrast_fitter.eye) {
-				    cv::ellipse(disp, toImgCoord(toRotatedRect(project(contrast_fitter.eye, focal_length)), disp, displayscale), cvx::rgb(0,60,0), 1, CV_AA);
-				    cv::ellipse(curr_disp, toImgCoord(toRotatedRect(project(contrast_fitter.eye, focal_length)), curr_disp, displayscale), cvx::rgb(0,60,0), 1, CV_AA);
-                }
-			}
-			if (display_est_pupil_ellipses_lm) {
-                if (edge_fitter.eye) {
-				    cv::ellipse(disp, toImgCoord(toRotatedRect(project(edge_fitter.eye, focal_length)), disp, displayscale), cvx::rgb(0,60,60), 1, CV_AA);
-				    cv::ellipse(curr_disp, toImgCoord(toRotatedRect(project(edge_fitter.eye, focal_length)), curr_disp, displayscale), cvx::rgb(0,60,60), 1, CV_AA);
-                }
-			}
             if (display_true_pupil_ellipses) {
                 if (true_eye) {
-				    cv::ellipse(curr_disp, toImgCoord(toRotatedRect(project(true_eye, focal_length)), curr_disp, displayscale), cvx::rgb(60,0,0), 1, CV_AA);
+                    cv::ellipse(disp, toImgCoord(toRotatedRect(project(true_eye, focal_length)), disp, displayscale), cvx::rgb(60,60,60), -1, CV_AA);
                 }
-			}
+            }
 
-			auto display_from = [&] (const std::vector<EyeModelFitter::Pupil>& pupils, double r, double g, double b) {
-				for (const auto& pupil : pupils) {
-					if (pupil.circle)
-						cv::ellipse(disp, toImgCoord(toRotatedRect(Ellipse2D<double>(project(pupil.circle, focal_length))), disp, displayscale), cvx::rgb(r,g,b), 1, CV_AA);
-				}
-				if (curr_i < pupils.size() && pupils[curr_i].circle) {
-					cv::ellipse(curr_disp, toImgCoord(toRotatedRect(Ellipse2D<double>(project(pupils[curr_i].circle, focal_length))), curr_disp, displayscale), cvx::rgb(r,g,b), 1, CV_AA);
-					cv::ellipse(curr_edge_disp, toImgCoord(toRotatedRect(Ellipse2D<double>(project(pupils[curr_i].circle, focal_length))), curr_edge_disp, displayscale), cvx::rgb(r,g,b), 1, CV_AA);
-				}
-			};
+            if (display_est_pupil_ellipses) {
+                if (simple_fitter.eye) {
+                    cv::ellipse(disp, toImgCoord(toRotatedRect(project(simple_fitter.eye, focal_length)), disp, displayscale), cvx::rgb(60,0,60), 1, CV_AA);
+                    cv::ellipse(curr_disp, toImgCoord(toRotatedRect(project(simple_fitter.eye, focal_length)), curr_disp, displayscale), cvx::rgb(60,0,60), 1, CV_AA);
+                }
+            }
+            if (display_est_pupil_ellipses_contrast) {
+                if (contrast_fitter.eye) {
+                    cv::ellipse(disp, toImgCoord(toRotatedRect(project(contrast_fitter.eye, focal_length)), disp, displayscale), cvx::rgb(0,60,0), 1, CV_AA);
+                    cv::ellipse(curr_disp, toImgCoord(toRotatedRect(project(contrast_fitter.eye, focal_length)), curr_disp, displayscale), cvx::rgb(0,60,0), 1, CV_AA);
+                }
+            }
+            if (display_est_pupil_ellipses_lm) {
+                if (edge_fitter.eye) {
+                    cv::ellipse(disp, toImgCoord(toRotatedRect(project(edge_fitter.eye, focal_length)), disp, displayscale), cvx::rgb(0,60,60), 1, CV_AA);
+                    cv::ellipse(curr_disp, toImgCoord(toRotatedRect(project(edge_fitter.eye, focal_length)), curr_disp, displayscale), cvx::rgb(0,60,60), 1, CV_AA);
+                }
+            }
+            if (display_true_pupil_ellipses) {
+                if (true_eye) {
+                    cv::ellipse(curr_disp, toImgCoord(toRotatedRect(project(true_eye, focal_length)), curr_disp, displayscale), cvx::rgb(60,0,0), 1, CV_AA);
+                }
+            }
 
-			if (display_obs_pupil_ellipses) {
-				display_from(null_fitter.pupils, 255,0,255);
-			}
-			if (display_est_pupil_ellipses) {
-				display_from(simple_fitter.pupils, 255,255,0);
-			}
-			if (display_est_pupil_ellipses_contrast) {
-				display_from(contrast_fitter.pupils, 0,255,0);
-			}
-			if (display_est_pupil_ellipses_lm) {
-				display_from(edge_fitter.pupils, 0,255,255);
-			}
-			if (display_true_pupil_ellipses) {
+            auto display_from = [&] (const std::vector<EyeModelFitter::Pupil>& pupils, double r, double g, double b) {
+                for (const auto& pupil : pupils) {
+                    if (pupil.circle)
+                        cv::ellipse(disp, toImgCoord(toRotatedRect(Ellipse2D<double>(project(pupil.circle, focal_length))), disp, displayscale), cvx::rgb(r,g,b), 1, CV_AA);
+                }
+                if (curr_i < pupils.size() && pupils[curr_i].circle) {
+                    cv::ellipse(curr_disp, toImgCoord(toRotatedRect(Ellipse2D<double>(project(pupils[curr_i].circle, focal_length))), curr_disp, displayscale), cvx::rgb(r,g,b), 1, CV_AA);
+                    cv::ellipse(curr_edge_disp, toImgCoord(toRotatedRect(Ellipse2D<double>(project(pupils[curr_i].circle, focal_length))), curr_edge_disp, displayscale), cvx::rgb(r,g,b), 1, CV_AA);
+                }
+            };
+
+            if (display_obs_pupil_ellipses) {
+                display_from(null_fitter.pupils, 255,0,255);
+            }
+            if (display_est_pupil_ellipses) {
+                display_from(simple_fitter.pupils, 255,255,0);
+            }
+            if (display_est_pupil_ellipses_contrast) {
+                display_from(contrast_fitter.pupils, 0,255,0);
+            }
+            if (display_est_pupil_ellipses_lm) {
+                display_from(edge_fitter.pupils, 0,255,255);
+            }
+            if (display_true_pupil_ellipses) {
                 std::vector<std::vector<cv::Point>> pts;
                 for (auto&& id : ids) {
                     const auto& true_pupils_id_it = true_pupils.find(id);
-					if (true_pupils_id_it != true_pupils.end()) {
+                    if (true_pupils_id_it != true_pupils.end()) {
                         const auto& true_pupil = true_pupils_id_it->second;
 
                         auto this_pts = fun::map([&](const Eigen::Vector2d& pt){
@@ -661,7 +661,7 @@ int main(int argc, char* argv[])
                         }, true_pupil.outline);
                         pts.emplace_back(std::move(this_pts));
                     }
-				}
+                }
                 cv::polylines(disp, pts, true, cvx::rgb(255,0,0), 1, CV_AA, 5);
 
                 const auto& true_pupils_curri_it = true_pupils.find(ids[curr_i]);
@@ -674,159 +674,159 @@ int main(int argc, char* argv[])
                     }, true_pupil.outline);
                     cv::polylines(curr_disp, this_pts, true, cvx::rgb(255,0,0), 1, CV_AA, 5);
                     cv::polylines(curr_edge_disp, this_pts, true, cvx::rgb(255,0,0), 1, CV_AA, 5);
-				}
-			}
+                }
+            }
 
-			double anglediff_i, anglediff2_i, anglediff_dlib_i, anglediff_lm_i;
-			double ellipdist_i, ellipdist2_i, ellipdist_dlib_i, ellipdist_lm_i;
+            double anglediff_i, anglediff2_i, anglediff_dlib_i, anglediff_lm_i;
+            double ellipdist_i, ellipdist2_i, ellipdist_dlib_i, ellipdist_lm_i;
 
-			acc::accumulator_set<double, acc::stats<acc::tag::mean, acc::tag::variance>> acc_anglediff, acc_anglediff2, acc_anglediff_dlib, acc_anglediff_lm;
-			if (recalc_ellipdist) {
-				acc_ellipdist = acc::accumulator_set<double, acc::stats<acc::tag::mean, acc::tag::variance>>();
-				acc_ellipdist2 = acc::accumulator_set<double, acc::stats<acc::tag::mean, acc::tag::variance>>();
-				acc_ellipdist_dlib = acc::accumulator_set<double, acc::stats<acc::tag::mean, acc::tag::variance>>();
-				acc_ellipdist_lm = acc::accumulator_set<double, acc::stats<acc::tag::mean, acc::tag::variance>>();
-			}
-			for (int i = 0; i < N; ++i) {
-				const EyeModelFitter::Circle& pupil = null_fitter.pupils[i].circle;
-				const EyeModelFitter::Circle& pupil2 = simple_fitter.pupils[i].circle;
-				const EyeModelFitter::Circle& pupil_dlib = contrast_fitter.pupils[i].circle;
-				const EyeModelFitter::Circle& pupil_lm = edge_fitter.pupils[i].circle;
-				const auto& id = ids[i];
+            acc::accumulator_set<double, acc::stats<acc::tag::mean, acc::tag::variance>> acc_anglediff, acc_anglediff2, acc_anglediff_dlib, acc_anglediff_lm;
+            if (recalc_ellipdist) {
+                acc_ellipdist = acc::accumulator_set<double, acc::stats<acc::tag::mean, acc::tag::variance>>();
+                acc_ellipdist2 = acc::accumulator_set<double, acc::stats<acc::tag::mean, acc::tag::variance>>();
+                acc_ellipdist_dlib = acc::accumulator_set<double, acc::stats<acc::tag::mean, acc::tag::variance>>();
+                acc_ellipdist_lm = acc::accumulator_set<double, acc::stats<acc::tag::mean, acc::tag::variance>>();
+            }
+            for (int i = 0; i < N; ++i) {
+                const EyeModelFitter::Circle& pupil = null_fitter.pupils[i].circle;
+                const EyeModelFitter::Circle& pupil2 = simple_fitter.pupils[i].circle;
+                const EyeModelFitter::Circle& pupil_dlib = contrast_fitter.pupils[i].circle;
+                const EyeModelFitter::Circle& pupil_lm = edge_fitter.pupils[i].circle;
+                const auto& id = ids[i];
                 auto true_pupil_it = true_pupils.find(id);
-				if (true_pupil_it == true_pupils.end())
-					continue;
+                if (true_pupil_it == true_pupils.end())
+                    continue;
 
-				const auto& true_pupil = true_pupil_it->second;
+                const auto& true_pupil = true_pupil_it->second;
 
-				double anglediff = acos(pupil.normal.dot(true_pupil.gaze_vector))*180/PI;
-				double anglediff2 = acos(pupil2.normal.dot(true_pupil.gaze_vector))*180/PI;
-				double anglediff_dlib = acos(pupil_dlib.normal.dot(true_pupil.gaze_vector))*180/PI;
-				double anglediff_lm = acos(pupil_lm.normal.dot(true_pupil.gaze_vector))*180/PI;
+                double anglediff = acos(pupil.normal.dot(true_pupil.gaze_vector))*180/PI;
+                double anglediff2 = acos(pupil2.normal.dot(true_pupil.gaze_vector))*180/PI;
+                double anglediff_dlib = acos(pupil_dlib.normal.dot(true_pupil.gaze_vector))*180/PI;
+                double anglediff_lm = acos(pupil_lm.normal.dot(true_pupil.gaze_vector))*180/PI;
 
-				if (i == curr_i) {
-					anglediff_i = anglediff;
-					anglediff2_i = anglediff2;
-					anglediff_dlib_i = anglediff_dlib;
-					anglediff_lm_i = anglediff_lm;
-				}
+                if (i == curr_i) {
+                    anglediff_i = anglediff;
+                    anglediff2_i = anglediff2;
+                    anglediff_dlib_i = anglediff_dlib;
+                    anglediff_lm_i = anglediff_lm;
+                }
 
-				acc_anglediff(anglediff);
-				acc_anglediff2(anglediff2);
-				acc_anglediff_dlib(anglediff_dlib);
-				acc_anglediff_lm(anglediff_lm);
+                acc_anglediff(anglediff);
+                acc_anglediff2(anglediff2);
+                acc_anglediff_dlib(anglediff_dlib);
+                acc_anglediff_lm(anglediff_lm);
 
-				auto true_pupil_outline = true_pupil.outline;
+                auto true_pupil_outline = true_pupil.outline;
 
-				if (recalc_ellipdist || i == curr_i) {
-					double ellipdist = calcEllipseTruthOverlap(Ellipse2D<double>(project(pupil, focal_length)), true_pupil_outline);
-					double ellipdist2 = calcEllipseTruthOverlap(Ellipse2D<double>(project(pupil2, focal_length)), true_pupil_outline);
-					double ellipdist_dlib = calcEllipseTruthOverlap(Ellipse2D<double>(project(pupil_dlib, focal_length)), true_pupil_outline);
-					double ellipdist_lm = calcEllipseTruthOverlap(Ellipse2D<double>(project(pupil_lm, focal_length)), true_pupil_outline);
+                if (recalc_ellipdist || i == curr_i) {
+                    double ellipdist = calcEllipseTruthOverlap(Ellipse2D<double>(project(pupil, focal_length)), true_pupil_outline);
+                    double ellipdist2 = calcEllipseTruthOverlap(Ellipse2D<double>(project(pupil2, focal_length)), true_pupil_outline);
+                    double ellipdist_dlib = calcEllipseTruthOverlap(Ellipse2D<double>(project(pupil_dlib, focal_length)), true_pupil_outline);
+                    double ellipdist_lm = calcEllipseTruthOverlap(Ellipse2D<double>(project(pupil_lm, focal_length)), true_pupil_outline);
 
-					if (i == curr_i) {
-						ellipdist_i = ellipdist;
-						ellipdist2_i = ellipdist2;
-						ellipdist_dlib_i = ellipdist_dlib;
-						ellipdist_lm_i = ellipdist_lm;
-					}
-					if (recalc_ellipdist) {
-						acc_ellipdist(ellipdist);
-						acc_ellipdist2(ellipdist2);
-						acc_ellipdist_dlib(ellipdist_dlib);
-						acc_ellipdist_lm(ellipdist_lm);
-					}
-				}
-			}
-			recalc_ellipdist = false;
+                    if (i == curr_i) {
+                        ellipdist_i = ellipdist;
+                        ellipdist2_i = ellipdist2;
+                        ellipdist_dlib_i = ellipdist_dlib;
+                        ellipdist_lm_i = ellipdist_lm;
+                    }
+                    if (recalc_ellipdist) {
+                        acc_ellipdist(ellipdist);
+                        acc_ellipdist2(ellipdist2);
+                        acc_ellipdist_dlib(ellipdist_dlib);
+                        acc_ellipdist_lm(ellipdist_lm);
+                    }
+                }
+            }
+            recalc_ellipdist = false;
 
-			std::stringstream curr_i_ss;
-			curr_i_ss << std::fixed << std::setprecision(4);
-			curr_i_ss << "obs " << anglediff_i << ", ";
-			curr_i_ss << "est " << anglediff2_i << ", ";
-			curr_i_ss << "grd " << anglediff_dlib_i << ", ";
-			curr_i_ss << "lm " << anglediff_lm_i << " | ";
-			curr_i_ss << "obs " << ellipdist_i << ", ";
-			curr_i_ss << "est " << ellipdist2_i << ", ";
-			curr_i_ss << "grd " << ellipdist_dlib_i << ", ";
-			curr_i_ss << "lm " << ellipdist_lm_i << " | ";
-			curr_i_ss << "Frame " << curr_i << " (total " << obs_eye_images.size() << ")";
+            std::stringstream curr_i_ss;
+            curr_i_ss << std::fixed << std::setprecision(4);
+            curr_i_ss << "obs " << anglediff_i << ", ";
+            curr_i_ss << "est " << anglediff2_i << ", ";
+            curr_i_ss << "grd " << anglediff_dlib_i << ", ";
+            curr_i_ss << "lm " << anglediff_lm_i << " | ";
+            curr_i_ss << "obs " << ellipdist_i << ", ";
+            curr_i_ss << "est " << ellipdist2_i << ", ";
+            curr_i_ss << "grd " << ellipdist_dlib_i << ", ";
+            curr_i_ss << "lm " << ellipdist_lm_i << " | ";
+            curr_i_ss << "Frame " << curr_i << " (total " << obs_eye_images.size() << ")";
 
-			std::stringstream ss;
-			ss << std::fixed << std::setprecision(4);
-			ss << "obs " << acc::mean(acc_anglediff) << " (" << acc::variance(acc_anglediff) << "), ";
-			ss << "est " << acc::mean(acc_anglediff2) << " (" << acc::variance(acc_anglediff2) << "), ";
-			ss << "grd " << acc::mean(acc_anglediff_dlib) << " (" << acc::variance(acc_anglediff_dlib) << "), ";
-			ss << "lm " << acc::mean(acc_anglediff_lm) << " (" << acc::variance(acc_anglediff_lm) << ") | ";
-			ss << "obs " << acc::mean(acc_ellipdist) << " (" << acc::variance(acc_ellipdist) << "), ";
-			ss << "est " << acc::mean(acc_ellipdist2) << " (" << acc::variance(acc_ellipdist2) << "), ";
-			ss << "grd " << acc::mean(acc_ellipdist_dlib) << " (" << acc::variance(acc_ellipdist_dlib) << "), ";
-			ss << "lm " << acc::mean(acc_ellipdist_lm) << " (" << acc::variance(acc_ellipdist_lm) << ")";
+            std::stringstream ss;
+            ss << std::fixed << std::setprecision(4);
+            ss << "obs " << acc::mean(acc_anglediff) << " (" << acc::variance(acc_anglediff) << "), ";
+            ss << "est " << acc::mean(acc_anglediff2) << " (" << acc::variance(acc_anglediff2) << "), ";
+            ss << "grd " << acc::mean(acc_anglediff_dlib) << " (" << acc::variance(acc_anglediff_dlib) << "), ";
+            ss << "lm " << acc::mean(acc_anglediff_lm) << " (" << acc::variance(acc_anglediff_lm) << ") | ";
+            ss << "obs " << acc::mean(acc_ellipdist) << " (" << acc::variance(acc_ellipdist) << "), ";
+            ss << "est " << acc::mean(acc_ellipdist2) << " (" << acc::variance(acc_ellipdist2) << "), ";
+            ss << "grd " << acc::mean(acc_ellipdist_dlib) << " (" << acc::variance(acc_ellipdist_dlib) << "), ";
+            ss << "lm " << acc::mean(acc_ellipdist_lm) << " (" << acc::variance(acc_ellipdist_lm) << ")";
 
 
-			cv::imshow("Eye", disp);
-			cv::imshow("Current Eye", curr_disp);
-			cv::imshow("Current Eye Edges", curr_edge_disp);
+            cv::imshow("Eye", disp);
+            cv::imshow("Current Eye", curr_disp);
+            cv::imshow("Current Eye Edges", curr_edge_disp);
 
-			cv::displayStatusBar("Eye", ss.str());
-			cv::displayStatusBar("Current Eye", curr_i_ss.str());
+            cv::displayStatusBar("Eye", ss.str());
+            cv::displayStatusBar("Current Eye", curr_i_ss.str());
 
-			if (recording_writer.isOpened()) {
-				recording_writer << curr_disp;
-			}
+            if (recording_writer.isOpened()) {
+                recording_writer << curr_disp;
+            }
 
             if (display_intersection_ellip || display_intersection_lines) {
                 cv::Mat disp_invalid_lines = cv::Mat::zeros(displayscale*obs_eye_images[0].rows, displayscale*obs_eye_images[0].cols, CV_32FC1);
-				cv::Mat disp_valid_lines = cv::Mat::zeros(displayscale*obs_eye_images[0].rows, displayscale*obs_eye_images[0].cols, CV_32FC1);
-				cv::Mat disp_ellipses = cv::Mat::zeros(displayscale*obs_eye_images[0].rows, displayscale*obs_eye_images[0].cols, CV_32FC1);
-				for (const auto& pupil : null_fitter.pupils) {
-					Eigen::Matrix<double,2,1> c_proj = project(pupil.circle.centre, focal_length);
-					Eigen::Matrix<double,2,1> v_proj = project(pupil.circle.centre+pupil.circle.normal, focal_length) - c_proj;
-					Eigen::Matrix<double,2,1> start = c_proj - 500*v_proj;
-					Eigen::Matrix<double,2,1> end = c_proj + 500*v_proj;
+                cv::Mat disp_valid_lines = cv::Mat::zeros(displayscale*obs_eye_images[0].rows, displayscale*obs_eye_images[0].cols, CV_32FC1);
+                cv::Mat disp_ellipses = cv::Mat::zeros(displayscale*obs_eye_images[0].rows, displayscale*obs_eye_images[0].cols, CV_32FC1);
+                for (const auto& pupil : null_fitter.pupils) {
+                    Eigen::Matrix<double,2,1> c_proj = project(pupil.circle.centre, focal_length);
+                    Eigen::Matrix<double,2,1> v_proj = project(pupil.circle.centre+pupil.circle.normal, focal_length) - c_proj;
+                    Eigen::Matrix<double,2,1> start = c_proj - 500*v_proj;
+                    Eigen::Matrix<double,2,1> end = c_proj + 500*v_proj;
 
-					if (display_intersection_lines) {
+                    if (display_intersection_lines) {
 
-						cv::Mat disp_line = cv::Mat::zeros(displayscale*obs_eye_images[0].rows, displayscale*obs_eye_images[0].cols, CV_8UC1);
-						cvx::line(disp_line,
+                        cv::Mat disp_line = cv::Mat::zeros(displayscale*obs_eye_images[0].rows, displayscale*obs_eye_images[0].cols, CV_8UC1);
+                        cvx::line(disp_line,
                             cv::Point2f(disp_line.cols/2 + displayscale*start[0], disp_line.rows/2 + displayscale*start[1]),
-							cv::Point2f(disp_line.cols/2 + displayscale*end[0], disp_line.rows/2 + displayscale*end[1]),
-							cv::Scalar(25));
+                            cv::Point2f(disp_line.cols/2 + displayscale*end[0], disp_line.rows/2 + displayscale*end[1]),
+                            cv::Scalar(25));
 
-						cv::Mat disp_line_f = cvx::convert(disp_line, CV_32FC1, 1./255, 0);
+                        cv::Mat disp_line_f = cvx::convert(disp_line, CV_32FC1, 1./255, 0);
 
                         if (pupil.init_valid)
-						    cv::accumulate((disp_line_f).mul(1 - disp_valid_lines), disp_valid_lines);
+                            cv::accumulate((disp_line_f).mul(1 - disp_valid_lines), disp_valid_lines);
                         else
                             cv::accumulate((disp_line_f).mul(1 - disp_invalid_lines), disp_invalid_lines);
-					}
+                    }
 
-					if (display_intersection_ellip) {
-						cv::Mat disp_ellipse = cv::Mat::zeros(displayscale*obs_eye_images[0].rows, displayscale*obs_eye_images[0].cols, CV_8UC1);
-						cv::ellipse(disp_ellipse, toImgCoord(toRotatedRect(Ellipse2D<double>(project(pupil.circle, focal_length))), disp, displayscale), cv::Scalar(50), 1, CV_AA);
+                    if (display_intersection_ellip) {
+                        cv::Mat disp_ellipse = cv::Mat::zeros(displayscale*obs_eye_images[0].rows, displayscale*obs_eye_images[0].cols, CV_8UC1);
+                        cv::ellipse(disp_ellipse, toImgCoord(toRotatedRect(Ellipse2D<double>(project(pupil.circle, focal_length))), disp, displayscale), cv::Scalar(50), 1, CV_AA);
 
-						cv::Mat disp_ellipse_f = cvx::convert(disp_ellipse, CV_32FC1, 1./255, 0);
-						cv::accumulate((disp_ellipse_f).mul(1 - disp_ellipses), disp_ellipses);
-					}
+                        cv::Mat disp_ellipse_f = cvx::convert(disp_ellipse, CV_32FC1, 1./255, 0);
+                        cv::accumulate((disp_ellipse_f).mul(1 - disp_ellipses), disp_ellipses);
+                    }
                 }
 
                 cv::Mat disp_intersection = cv::Mat(displayscale*obs_eye_images[0].rows, displayscale*obs_eye_images[0].cols, CV_32FC3, cvx::rgb(1,1,1));
                 cv::accumulate(cvx::cvtColor(disp_invalid_lines, cv::COLOR_GRAY2BGR).mul(cvx::rgb(1,0,0) - disp_intersection), disp_intersection);
-				cv::accumulate(cvx::cvtColor(disp_valid_lines, cv::COLOR_GRAY2BGR).mul(cvx::rgb(0,0,1) - disp_intersection), disp_intersection);
-				cv::accumulate(cvx::cvtColor(disp_ellipses, cv::COLOR_GRAY2BGR).mul(cvx::rgb(1,0,1) - disp_intersection), disp_intersection);
-				
+                cv::accumulate(cvx::cvtColor(disp_valid_lines, cv::COLOR_GRAY2BGR).mul(cvx::rgb(0,0,1) - disp_intersection), disp_intersection);
+                cv::accumulate(cvx::cvtColor(disp_ellipses, cv::COLOR_GRAY2BGR).mul(cvx::rgb(1,0,1) - disp_intersection), disp_intersection);
+
                 if (display_intersection_lines) {
                     auto crosspt = toImgCoord(toPoint2f(project(simple_fitter.eye.centre, focal_length)), disp, displayscale);
                     for (int i = -1; i <= 1; ++i)
                         for (int j = -1; j <= 1; ++j)
                             cvx::cross(disp_intersection, crosspt + cv::Point2f(i,j), 10, cvx::rgb(0,0,0), 3);
-					cvx::cross(disp_intersection, crosspt, 10, cvx::rgb(0,200,0), 3);
-				}
+                    cvx::cross(disp_intersection, crosspt, 10, cvx::rgb(0,200,0), 3);
+                }
 
-				cv::imshow("Intersection", disp_intersection);
-			}
+                cv::imshow("Intersection", disp_intersection);
+            }
 
-			Key key = cvxWaitKey(-1);
+            Key key = cvxWaitKey(-1);
 
             switch(key.code) {
             case 16: // Shift
@@ -848,9 +848,9 @@ int main(int argc, char* argv[])
                 display_true_pupil_ellipses = !display_true_pupil_ellipses;
                 break;
 
-			case 27: // ESC
-			case'q':
-				do_display = false;
+            case 27: // ESC
+            case'q':
+                do_display = false;
                 break;
             case 'w':
                 writeResults((imagedir / "result_analysis.txt").string(),
@@ -863,20 +863,20 @@ int main(int argc, char* argv[])
                     focal_length);
                 break;
 
-			case '+':
-			case '=':
-				displayscale *= 1.1;
-				break;
-			case '-':
-			case '_':
-				displayscale /= 1.1;
-				break;
-			case 'i':
-				display_intersection_ellip = !display_intersection_ellip;
-				break;
-			case 'o':
-				display_intersection_lines = !display_intersection_lines;
-				break;
+            case '+':
+            case '=':
+                displayscale *= 1.1;
+                break;
+            case '-':
+            case '_':
+                displayscale /= 1.1;
+                break;
+            case 'i':
+                display_intersection_ellip = !display_intersection_ellip;
+                break;
+            case 'o':
+                display_intersection_lines = !display_intersection_lines;
+                break;
 
             case 'a': {
                 if (key.shift) {
@@ -887,7 +887,7 @@ int main(int argc, char* argv[])
                     } else {
                         std::cout << "Animation disabled" << std::endl;
                     }
-                    
+
                 } else {
                     int id;
                     if (N < obs_eye_images.size() - 1) {
@@ -912,7 +912,7 @@ int main(int argc, char* argv[])
                         N++;
                     }
                 }
-				break;
+                break;
             }
 
             case 's':
@@ -974,12 +974,12 @@ int main(int argc, char* argv[])
                     }
 
                     contrast_fitter.pupils[curr_i].params = start_params;
-                    
+
                 }
                 else
                 {
                     auto start_params = contrast_fitter.pupils[curr_i].params;
-                
+
                     auto best_params = start_params;
                     double best_contrast = contrast_fitter.single_contrast_metric(curr_i);
 
@@ -1082,7 +1082,7 @@ int main(int argc, char* argv[])
                     std::cout << contrast_fitter.pupils[curr_i].params.theta << "," << contrast_fitter.pupils[curr_i].params.psi << "," <<  contrast_fitter.pupils[curr_i].params.radius << std::endl;
                     contrast_fitter.print_single_contrast_metric(curr_i);
                 } else {
-				    curr_i = (curr_i + 1) % obs_eye_images.size();
+                    curr_i = (curr_i + 1) % obs_eye_images.size();
                 }
                 break;
             case ';':
@@ -1112,7 +1112,7 @@ int main(int argc, char* argv[])
 
                 break;
 
-			case 'r':
+            case 'r':
                 if (key.shift) {
                     if (!recording_writer.isOpened()) {
                         int fourcc = CV_FOURCC('M','J','P','G');
@@ -1138,7 +1138,7 @@ int main(int argc, char* argv[])
                         std::cout << "RANSAC disabled" << std::endl;
                     }
                 }
-				break;
+                break;
             case 'p':
                 std::cout << curr_i << std::endl;
                 std::cout << contrast_fitter.pupils[curr_i].params.theta << "," << contrast_fitter.pupils[curr_i].params.psi << "," <<  contrast_fitter.pupils[curr_i].params.radius << std::endl;
@@ -1166,16 +1166,16 @@ int main(int argc, char* argv[])
             default:
                 std::cout << "Unknown key code: " << (int)key.code << " (ascii " << std::string(1, key.code) << ")" << std::endl;
                 break;
-			}
-		}
-	}
+            }
+        }
+    }
 
-	//catch (std::exception& e) {
-	//	std::cerr << e.what() << std::endl;
-	//	while (cv::waitKey(10) == -1) {}
-	//	return 1;
-	//}
+    //catch (std::exception& e) {
+    //    std::cerr << e.what() << std::endl;
+    //    while (cv::waitKey(10) == -1) {}
+    //    return 1;
+    //}
 
-	return 0;
+    return 0;
 }
 

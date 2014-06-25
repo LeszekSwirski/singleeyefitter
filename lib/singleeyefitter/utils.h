@@ -12,11 +12,11 @@ namespace singleeyefitter {
 class MakeString
 {
 public:
-	std::stringstream stream;
-	operator std::string() const { return stream.str(); }
+    std::stringstream stream;
+    operator std::string() const { return stream.str(); }
 
-	template<class T>
-	MakeString& operator<<(T const& VAR) { stream << VAR; return *this; }
+    template<class T>
+    MakeString& operator<<(T const& VAR) { stream << VAR; return *this; }
 };
 
 inline int pow2(int n)
@@ -30,37 +30,37 @@ int random(int min, int max, unsigned int seed);
 template<typename T>
 std::vector<T> randomSubset(const std::vector<T>& src, typename std::vector<T>::size_type size)
 {
-	if (size > src.size())
-		throw std::range_error("Subset size out of range");
+    if (size > src.size())
+        throw std::range_error("Subset size out of range");
 
-	std::vector<T> ret;
-	std::set<size_t> vals;
+    std::vector<T> ret;
+    std::set<size_t> vals;
 
-	for (size_t j = src.size() - size; j < src.size(); ++j)
-	{
-		size_t idx = random(0, j); // generate a random integer in range [0, j]
+    for (size_t j = src.size() - size; j < src.size(); ++j)
+    {
+        size_t idx = random(0, j); // generate a random integer in range [0, j]
 
-		if (vals.find(idx) != vals.end())
-			idx = j;
+        if (vals.find(idx) != vals.end())
+            idx = j;
 
-		ret.push_back(src[idx]);
+        ret.push_back(src[idx]);
         vals.insert(idx);
-	}
+    }
 
-	return ret;
+    return ret;
 }
 
 template<typename T>
 std::vector<T> randomSubset(const std::vector<T>& src, typename std::vector<T>::size_type size, unsigned int seed)
 {
-	if (size > src.size())
-		throw std::range_error("Subset size out of range");
+    if (size > src.size())
+        throw std::range_error("Subset size out of range");
 
-	std::vector<T> ret;
-	std::set<size_t> vals;
+    std::vector<T> ret;
+    std::set<size_t> vals;
 
-	for (size_t j = src.size() - size; j < src.size(); ++j)
-	{
+    for (size_t j = src.size() - size; j < src.size(); ++j)
+    {
         size_t idx = random(0, j, seed+j); // generate a random integer in range [0, j]
 
         if (vals.find(idx) != vals.end())
@@ -68,9 +68,9 @@ std::vector<T> randomSubset(const std::vector<T>& src, typename std::vector<T>::
 
         ret.push_back(src[idx]);
         vals.insert(idx);
-	}
+    }
 
-	return ret;
+    return ret;
 }
 
 } //namespace singleeyefitter

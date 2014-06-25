@@ -28,7 +28,7 @@ Scalar euclidean_distance(const Eigen::Matrix<Scalar,Dim,1>& p, const Eigen::Mat
         return euclidean_distance(p, v);   // v == w case
 
     // Consider the line extending the segment, parameterized as v + t (w - v).
-    // We find projection of point p onto the line. 
+    // We find projection of point p onto the line.
     // It falls where t = [(p-v) . (w-v)] / |w-v|^2
     auto t = (p - v).dot(w - v) / l2;
     if (t < 0.0)
