@@ -3,13 +3,15 @@
 
 #include <boost/math/special_functions/sign.hpp>
 
+#include <Eigen/StdVector>
+
 #include <ceres/ceres.h>
 #include <ceres/problem.h>
 #include <ceres/autodiff_cost_function.h>
 #include <ceres/solver.h>
 #include <ceres/jet.h>
 
-#include <singleeyefitter/SingleEyeFitter.h>
+#include <singleeyefitter/singleeyefitter.h>
 
 #include <singleeyefitter/utils.h>
 #include <singleeyefitter/cvx.h>
@@ -24,49 +26,12 @@
 #include <singleeyefitter/fun.h>
 #include <singleeyefitter/math.h>
 
-#include <singleeyefitter/timing.h>
-
 #include "distance.h"
 
 #include <spii/spii.h>
 #include <spii/term.h>
 #include <spii/function.h>
 #include <spii/solver.h>
-
-#if (defined(_MSC_VER) && defined(_WIN64))
-#define EIGEN_DEFINE_TEMPLATED_STL_VECTOR_SPECIALIZATION(...)
-#else
-#define EIGEN_DEFINE_TEMPLATED_STL_VECTOR_SPECIALIZATION(...) \
-	namespace std \
-{ \
-	template<typename T> \
-class vector<__VA_ARGS__, std::allocator<__VA_ARGS__> >  \
-	: public vector<__VA_ARGS__, EIGEN_ALIGNED_ALLOCATOR<__VA_ARGS__> > \
-  { \
-  typedef typename vector<__VA_ARGS__, EIGEN_ALIGNED_ALLOCATOR<__VA_ARGS__> > vector_base; \
-  public: \
-  typedef __VA_ARGS__ value_type; \
-  typedef typename vector_base::allocator_type allocator_type; \
-  typedef typename vector_base::size_type size_type;  \
-  typedef typename vector_base::iterator iterator;  \
-  explicit vector(const allocator_type& a = allocator_type()) : vector_base(a) {}  \
-  template<typename InputIterator> \
-  vector(InputIterator first, InputIterator last, const allocator_type& a = allocator_type()) : vector_base(first, last, a) {} \
-  vector(const vector& c) : vector_base(c) {}  \
-  explicit vector(size_type num, const value_type& val = value_type()) : vector_base(num, val) {} \
-  vector(iterator start, iterator end) : vector_base(start, end) {}  \
-  vector& operator=(const vector& x) {  \
-  vector_base::operator=(x);  \
-  return *this;  \
-	} \
-  }; \
-}
-#endif
-
-EIGEN_DEFINE_TEMPLATED_STL_VECTOR_SPECIALIZATION(Ellipse2D<T>)
-EIGEN_DEFINE_TEMPLATED_STL_VECTOR_SPECIALIZATION(Eigen::ParametrizedLine<T,2>)
-EIGEN_DEFINE_TEMPLATED_STL_VECTOR_SPECIALIZATION(Eigen::Matrix<T,2,2>)
-EIGEN_DEFINE_TEMPLATED_STL_VECTOR_SPECIALIZATION(Eigen::Matrix<T,3,3>)
 
 namespace ceres {
 	using singleeyefitter::math::sq;
@@ -156,9 +121,9 @@ inline ::ceres::Jet<T,N> smootherstep(T edge0, T edge1, ::ceres::Jet<T,N>&& f, c
 }
 template<typename T>
 inline auto smootherstep(typename ad_traits<T>::scalar edge0, typename ad_traits<T>::scalar edge1, T&& val)
-    -> decltype(smootherstep(edge0, edge1, std::forward<T>(val), ad_traits<T>::ad_tag()))
+    -> decltype(smootherstep(edge0, edge1, std::forward<T>(val), typename ad_traits<T>::ad_tag()))
 {
-    return smootherstep(edge0, edge1, std::forward<T>(val), ad_traits<T>::ad_tag());
+    return smootherstep(edge0, edge1, std::forward<T>(val), typename ad_traits<T>::ad_tag());
 }
 
 template<typename T>
@@ -180,7 +145,7 @@ inline ::ceres::Jet<T,N> norm(const ::ceres::Jet<T,N>& x, const ::ceres::Jet<T,N
 }
 template<typename T>
 inline typename std::decay<T>::type norm(T&& x, T&& y) {
-    return norm(std::forward<T>(x),std::forward<T>(y),ad_traits<T>::ad_tag());
+    return norm(std::forward<T>(x), std::forward<T>(y), typename ad_traits<T>::ad_tag());
 }
 
 template<typename T>
@@ -231,7 +196,7 @@ public:
 	}
     template<typename U>
     T operator()(U&& x, U&& y) {
-	    return calculate(std::forward<U>(x), std::forward<U>(y), ad_traits<typename T>::ad_tag(), ad_traits<typename U>::ad_tag());
+	    return calculate(std::forward<U>(x), std::forward<U>(y), typename ad_traits<T>::ad_tag(), typename ad_traits<U>::ad_tag());
     }
     
     template<typename U>
@@ -365,7 +330,7 @@ inline T ellipseGoodness(const Ellipse2D<T>& ellipse, const cv::Mat_<uint8_t>& e
     // band_width     The width of each band (inner and outer)
     // step_epsilon   The epsilon of the soft step function
 
-	return internal::ellipseGoodness<T>(ellipse, eye, band_width, step_epsilon, ad_traits<T>::ad_tag());
+	return internal::ellipseGoodness<T>(ellipse, eye, band_width, step_epsilon, typename ad_traits<T>::ad_tag());
 }
 
 //#define DEBUG_ELLIPSE_GOODNESS
@@ -776,7 +741,7 @@ template<typename T>
 struct EllipseGoodnessFunction {
     T operator()(const Sphere<T>& eye, T theta, T psi, T pupil_radius, T focal_length, typename ad_traits<T>::scalar band_width, typename ad_traits<T>::scalar step_epsilon, const cv::Mat& mEye) {
         typedef Eigen::Matrix<T,3,1> Vector3;
-        typedef ad_traits<T>::scalar Const;
+        typedef typename ad_traits<T>::scalar Const;
 
         static const Vector3 camera_centre(T(0),T(0),T(0));
 

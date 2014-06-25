@@ -6,6 +6,8 @@
 #include <map>
 #include <vector>
 
+#include <boost/iterator_adaptors.hpp>
+
 //#define LAMBDA2(...) { return __VA_ARGS__; }
 //#define LAMBDA(...) [&](__VA_ARGS__)LAMBDA2
 
@@ -16,7 +18,7 @@ namespace singleeyefitter {
 		template<class Container, class Start, class End, class Step>
 		Container range_(Start start, End end, Step step) {
 			Container c;
-			typedef std::decay<decltype(c[0])>::type Value;
+			typedef typename std::decay<decltype(c[0])>::type Value;
 			for (Value i = start; i < end; i += step) {
 				c.emplace_back(i);
 			}
@@ -39,7 +41,7 @@ namespace singleeyefitter {
 				T scale, offset;
 				LinspaceIterator(T scale, T offset, int i) : scale(scale), offset(offset), LinspaceIterator::iterator_adaptor_(i) { }
 				friend boost::iterator_core_access;
-				T dereference() const { return base_reference()*scale + offset; }
+				T dereference() const { return this->base_reference()*scale + offset; }
 			};
 
 			typedef LinspaceIterator iterator;
@@ -173,15 +175,15 @@ namespace singleeyefitter {
 
 		template<class Container>
 		auto sum(Container src) -> decltype(*begin(src)) {
-			typedef decltype(*begin(src)) con_type;
+			typedef decltype(*begin(src)) sum_type;
 
 			auto it = begin(src);
 			auto last = end(src);
 
 			if (it == last)
-				return con_type();
+				return sum_type();
 
-			acc_type acc = *it;
+			sum_type acc = *it;
 			++it;
 			for (; it < last; ++it) {
 				acc += *it;

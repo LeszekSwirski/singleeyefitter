@@ -114,4 +114,4 @@ struct matlab_traits<typename Circle<Scalar>, typename std::enable_if<
 };
 }*/
 
-#endif _CIRCLE_H_
+#endif//_CIRCLE_H_

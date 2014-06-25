@@ -27,6 +27,9 @@ Eigen::Matrix<Scalar,2,1> intersect(const Eigen::ParametrizedLine<Scalar, 2>& li
 	return Eigen::Matrix<Scalar,2,1>(px,py);
 }
 
+template<typename Range>
+typename boost::range_value<Range>::type::VectorType nearest_intersect(const Range& lines);
+
 namespace detail {
 	template<typename Scalar, int Dim>
 	struct intersect_helper {

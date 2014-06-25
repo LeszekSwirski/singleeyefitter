@@ -120,7 +120,7 @@ namespace singleeyefitter {
 
 
 	template<typename Scalar>
-	Ellipse2D<Scalar> project(const Sphere<Scalar>& sphere, typename Scalar focal_length)
+	Ellipse2D<Scalar> project(const Sphere<Scalar>& sphere, Scalar focal_length)
 	{
 		return Ellipse2D<Scalar>(
 			focal_length * sphere.centre.template head<2>() / sphere.centre[2],

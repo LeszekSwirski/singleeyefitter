@@ -60,12 +60,15 @@ if (MSVC)
 endif()
 
 include_directories(
+    SYSTEM
     ${Boost_INCLUDE_DIRS}
     ${OpenCV_INCLUDE_DIRS}
     ${TBB_INCLUDE_DIRS}
     ${EIGEN_INCLUDE_DIRS}
     ${CERES_INCLUDE_DIRS}
     ${pupiltracker_INCLUDE_DIRS}
+)
+include_directories(
     ${singleeyefitter_SOURCE_DIR}/lib
 )
 link_directories(

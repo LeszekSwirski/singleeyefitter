@@ -5,15 +5,13 @@
 #include <tuple>
 #include <cmath>
 
-#include <boost/format.hpp>
-
 namespace singleeyefitter {
 
 	// a = 0
 	template<typename T>
 	T solve(T a) {
 		if (a == 0) return 0;
-		else throw std::exception(str(boost::format("No solution for %1% = 0 exists") % a).c_str());
+		else throw std::runtime_error("No solution");
 	}
 	// ax + b = 0
 	template<typename T>
@@ -36,7 +34,7 @@ namespace singleeyefitter {
 		// Pg 184
 		auto det = sq(b) - 4 * a*c;
 		if (det < 0)
-			throw std::exception(str(boost::format("No real solution for %1%x^2 + %2%x + %3% = 0 exists") % a % b % c).c_str());
+			throw std::runtime_error("No solution");
 		auto sqrtdet = sqrt(det);
 		auto q = -0.5*(b + (b >= 0 ? 1 : -1)*sqrt(det));
 		return std::tuple<T, T>(q / a, c / q);
@@ -108,4 +106,4 @@ namespace singleeyefitter {
 
 }
 
-#endif _SOLVE_H_
+#endif//_SOLVE_H_

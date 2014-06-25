@@ -17,7 +17,13 @@ endif()
 
 ExternalProject_Get_Property(spii INSTALL_DIR)
 set(spii_INCLUDE_DIRS ${INSTALL_DIR}/include)
-set(spii_LIBRARIES ${INSTALL_DIR}/lib/spii.lib ${INSTALL_DIR}/lib/meschach.lib)
+find_library (spii_LIBRARY_RELEASE
+              spii
+              PATHS ${INSTALL_DIR}/lib/)
+find_library (meschach_LIBRARY_RELEASE
+              meschach
+              PATHS ${INSTALL_DIR}/lib/)
+set(spii_LIBRARIES ${spii_LIBRARY_RELEASE} ${meschach_LIBRARY_RELEASE})
 
 include_directories(
     SYSTEM
