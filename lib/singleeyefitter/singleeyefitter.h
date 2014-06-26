@@ -1,6 +1,7 @@
 #ifndef SingleEyeFitter_h__
 #define SingleEyeFitter_h__
 
+#include <mutex>
 #include <Eigen/Core>
 #include <opencv2/core/core.hpp>
 #include <singleeyefitter/cvx.h>
@@ -68,7 +69,7 @@ namespace singleeyefitter {
 		Index add_observation(cv::Mat image, Ellipse pupil, int n_pseudo_inliers = 0);
 		Index add_observation(cv::Mat image, Ellipse pupil, std::vector<cv::Point2f> pupil_inliers);
 
-		void clear_observations();
+		void reset();
 
 		//
 		// Global (eye+pupils) calculations
@@ -120,6 +121,9 @@ namespace singleeyefitter {
 
 		Sphere eye;
 		std::vector<Pupil> pupils;
+		std::mutex model_mutex;
+		// Model version gets incremented on initialisation/reset, so that long-running background-thread refines don't overwrite the model
+		int model_version = 0;
 
 		const Circle& unproject_single_observation(Pupil& pupil, double pupil_radius = 1) const;
 		const Circle& initialise_single_observation(Pupil& pupil);
@@ -128,7 +132,7 @@ namespace singleeyefitter {
 		void print_single_contrast_metric(const Pupil& pupil) const;
 
 		Circle circleFromParams(const PupilParams& params) const;
-		Circle circleFromParams(const Sphere& eye, const PupilParams& params) const;
+		static Circle circleFromParams(const Sphere& eye, const PupilParams& params);
 	};
 
 }
