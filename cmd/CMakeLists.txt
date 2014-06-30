@@ -4,9 +4,9 @@ find_package (TBB REQUIRED)
 find_package (Eigen 3.0.0 REQUIRED)
 find_package (Ceres REQUIRED)
 
-set(PUPILTRACKER_INSTALL_DIR "" CACHE PATH "Pupil tracker installation directory")
+set(PUPILTRACKER_ROOT_DIR "" CACHE PATH "Pupil tracker installation directory")
 
-if(PUPILTRACKER_INSTALL_DIR)
+if(PUPILTRACKER_ROOT_DIR)
     # Do nothing
 else()
     message(WARNING "Pupil tracker not found, downloading from github")
@@ -49,17 +49,17 @@ else()
         DEPENDEES install)
 
     ExternalProject_Get_Property(pupiltracker INSTALL_DIR)
-    set(PUPILTRACKER_INSTALL_DIR ${INSTALL_DIR})
+    set(PUPILTRACKER_ROOT_DIR ${INSTALL_DIR})
 endif()
 
-set(pupiltracker_INCLUDE_DIRS ${PUPILTRACKER_INSTALL_DIR}/include)
+set(pupiltracker_INCLUDE_DIRS ${PUPILTRACKER_ROOT_DIR}/include)
 
 find_library (pupiltracker_LIBRARY_RELEASE
               pupiltracker
-              PATHS ${PUPILTRACKER_INSTALL_DIR}/lib/)
+              PATHS ${PUPILTRACKER_ROOT_DIR}/lib/)
 find_library (pupiltracker_LIBRARY_DEBUG
               pupiltrackerd
-              PATHS ${PUPILTRACKER_INSTALL_DIR}/lib/)
+              PATHS ${PUPILTRACKER_ROOT_DIR}/lib/)
 
 if (pupiltracker_LIBRARY_RELEASE AND pupiltracker_LIBRARY_DEBUG)
     set(pupiltracker_LIBRARIES optimized ${pupiltracker_LIBRARY_RELEASE} debug ${pupiltracker_LIBRARY_DEBUG})
