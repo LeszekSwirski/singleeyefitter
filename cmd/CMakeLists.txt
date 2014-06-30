@@ -11,10 +11,36 @@ if(PUPILTRACKER_INSTALL_DIR)
 else()
     message(WARNING "Pupil tracker not found, downloading from github")
 
+    # Forward cache variables, if they are Boost, TBB, OpenCV or specified on the command line
+    get_cmake_property(CACHE_VARS CACHE_VARIABLES)
+    foreach(CACHE_VAR ${CACHE_VARS})
+      get_property(CACHE_VAR_HELPSTRING CACHE ${CACHE_VAR} PROPERTY HELPSTRING)
+      if(CACHE_VAR_HELPSTRING STREQUAL "No help, variable specified on the command line."
+              OR CACHE_VAR MATCHES "^BOOST_.*"
+              OR CACHE_VAR MATCHES "^Boost_.*"
+              OR CACHE_VAR MATCHES "^TBB_.*"
+              OR CACHE_VAR MATCHES "^OpenCV_.*"
+        )
+        set(CACHE_VAR_VALUE "${${CACHE_VAR}}")
+
+        get_property(CACHE_VAR_TYPE CACHE ${CACHE_VAR} PROPERTY TYPE)
+        if(WIN32 AND (CACHE_VAR_TYPE STREQUAL "PATH" OR CACHE_VAR_TYPE STREQUAL "FILEPATH"))
+            STRING(REPLACE "\\" "/" CACHE_VAR_VALUE "${CACHE_VAR_VALUE}")
+        endif()
+
+        if(CACHE_VAR_TYPE STREQUAL "UNINITIALIZED")
+            set(CACHE_VAR_TYPE "STRING")
+        endif()
+
+        list(APPEND CMAKE_CACHE_ARGS -D${CACHE_VAR}:${CACHE_VAR_TYPE}=${CACHE_VAR_VALUE})
+      endif()
+    endforeach()
+
     ExternalProject_Add(pupiltracker
         GIT_REPOSITORY https://github.com/LeszekSwirski/pupiltracker.git
         PREFIX ${CMAKE_CURRENT_BINARY_DIR}/pupiltracker
-        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>)
+        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+        CMAKE_CACHE_ARGS ${CMAKE_CACHE_ARGS})
 
     ExternalProject_Add_Step(pupiltracker runcmake
         COMMAND ${CMAKE_COMMAND} "${CMAKE_BINARY_DIR}"
