@@ -5,20 +5,9 @@ find_package (Eigen 3.0.0 REQUIRED)
 find_package (Ceres REQUIRED)
 
 set(PUPILTRACKER_INSTALL_DIR "" CACHE PATH "Pupil tracker installation directory")
-set(PUPILTRACKER_SOURCE_DIR "" CACHE PATH "Pupil tracker source directory")
 
 if(PUPILTRACKER_INSTALL_DIR)
     # Do nothing
-elseif(PUPILTRACKER_SOURCE_DIR)
-    message(WARNING "Pupil tracker source found, compiling locally")
-
-    ExternalProject_Add(pupiltracker
-        SOURCE_DIR ${PUPILTRACKER_SOURCE_DIR}
-        PREFIX ${CMAKE_CURRENT_BINARY_DIR}/pupiltracker
-        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>)
-
-    ExternalProject_Get_Property(pupiltracker INSTALL_DIR)
-    set(PUPILTRACKER_INSTALL_DIR ${INSTALL_DIR})
 else()
     message(WARNING "Pupil tracker not found, downloading from github")
 
@@ -26,6 +15,12 @@ else()
         GIT_REPOSITORY https://github.com/LeszekSwirski/pupiltracker.git
         PREFIX ${CMAKE_CURRENT_BINARY_DIR}/pupiltracker
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>)
+
+    ExternalProject_Add_Step(pupiltracker runcmake
+        COMMAND ${CMAKE_COMMAND} "${CMAKE_BINARY_DIR}"
+        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+        COMMENT "Re-running cmake on ${CMAKE_PROJECT_NAME} project"
+        DEPENDEES install)
 
     ExternalProject_Get_Property(pupiltracker INSTALL_DIR)
     set(PUPILTRACKER_INSTALL_DIR ${INSTALL_DIR})
@@ -47,6 +42,7 @@ elseif (pupiltracker_LIBRARY_RELEASE)
 elseif (pupiltracker_LIBRARY_DEBUG)
     set(pupiltracker_LIBRARIES ${pupiltracker_LIBRARY_DEBUG})
 endif()
+message(STATUS "pupiltracker_LIBRARIES:\"${pupiltracker_LIBRARIES}\"")
 
 add_executable (
     singleeyefittercmd

@@ -24,6 +24,11 @@ ExternalProject_Add(spii
   GIT_TAG 3.0.0
   PREFIX ${CMAKE_CURRENT_BINARY_DIR}/spii
   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>)
+ExternalProject_Add_Step(spii runcmake
+    COMMAND ${CMAKE_COMMAND} "${CMAKE_BINARY_DIR}"
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+    COMMENT "Re-running cmake on ${CMAKE_PROJECT_NAME} project"
+    DEPENDEES install)
 
 add_subdirectory (lib)
 add_subdirectory (cmd)

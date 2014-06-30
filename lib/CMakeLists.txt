@@ -23,7 +23,12 @@ find_library (spii_LIBRARY_RELEASE
 find_library (meschach_LIBRARY_RELEASE
               meschach
               PATHS ${INSTALL_DIR}/lib/)
-set(spii_LIBRARIES ${spii_LIBRARY_RELEASE} ${meschach_LIBRARY_RELEASE})
+if (spii_LIBRARY_RELEASE AND meschach_LIBRARY_RELEASE)
+    set(spii_LIBRARIES ${spii_LIBRARY_RELEASE} ${meschach_LIBRARY_RELEASE})
+else()
+    set(spii_LIBRARIES "")
+endif()
+message(STATUS "spii_LIBRARIES:\"${spii_LIBRARIES}\"")
 
 include_directories(
     SYSTEM
