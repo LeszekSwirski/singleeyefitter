@@ -49,9 +49,9 @@ namespace singleeyefitter {
         typedef Eigen::Matrix<double, 3, 1> Vector3;
         typedef Eigen::ParametrizedLine<double, 2> Line;
         typedef Eigen::ParametrizedLine<double, 3> Line3;
-        typedef Circle3D<double> Circle;
-        typedef Ellipse2D<double> Ellipse;
-        typedef Sphere<double> Sphere;
+        typedef singleeyefitter::Circle3D<double> Circle;
+        typedef singleeyefitter::Ellipse2D<double> Ellipse;
+        typedef singleeyefitter::Sphere<double> Sphere;
         typedef size_t Index;
 
         static const Vector3 camera_centre;
