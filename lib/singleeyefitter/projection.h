@@ -1,6 +1,8 @@
 #ifndef singleeyefitter_project_h__
 #define singleeyefitter_project_h__
 
+#include <cmath>
+
 #include <Eigen/Core>
 #include "Ellipse.h"
 #include "Circle.h"
@@ -141,6 +143,7 @@ namespace singleeyefitter {
     std::pair<Circle3D<Scalar>, Circle3D<Scalar>> unproject(const Ellipse2D<Scalar>& ellipse, Scalar circle_radius, Scalar focal_length)
     {
         using std::sqrt;
+        using std::abs;
         using boost::math::sign;
         using math::sq;
 
