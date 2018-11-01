@@ -88,7 +88,7 @@ namespace singleeyefitter {
                 y = (u / 3)*cbrt(2 / (w + v)) - cbrt((w + v) / 2) - p / 3;
             else
                 y = cbrt((w - v) / 2) - (u / 3)*cbrt(2 / (w - v)) - p / 3;
-            return std::tuple<T, T, T>(-p, -p, -p);
+            return std::tuple<T, T, T>(y, y, y);
         }
         else {
             // Three real roots
